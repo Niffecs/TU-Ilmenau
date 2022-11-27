@@ -1,0 +1,52 @@
+
+name: Compile and push PDF File
+run-name: Compile and push PDF File
+on: [push]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v3
+      
+      - name: System
+        run: |
+          echo "User: ${{ github.actor }}"
+          echo "Trigger: ${{ github.event_name }}"
+          echo "OS: ${{ runner.os }}"
+          echo "Branch: ${{ github.repository }}:${{ github.ref }}"
+           
+      - name: Compile Latex File
+        uses: xu-cheng/latex-action@v2
+        with:
+          working_directory: ./Studium_Generale
+          root_file: ./Utopie_und_Dystopie.tex
+
+      - name: Rename PDF
+        run: |
+          mv ./Utopie_und_Dystopie/main.pdf Utopie_und_Dystopie.pdf
+
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: Utopie_und_Dystopie
+          path: Utopie_und_Dystopie.pdf
+
+      - name: Load Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+
+      - name: Python FTP Handler
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_PWD: ${{ secrets.FTP_PWD }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+        run: python upload.py Utopie_und_Dystopie.pdf
+
+
+      - name: Git Clean
+        run: git clean -fX
+      
+      - name: Status
+        run: echo "This job's status is ${{ job.status }}."
