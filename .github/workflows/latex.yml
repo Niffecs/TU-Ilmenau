@@ -24,7 +24,7 @@ jobs:
 
       - name: Rename PDF
         run: |
-          mv ./Studium_Generale/main.pdf Utopie_und_Dystopie.pdf
+          mv ./Studium_Generale/Utopie_und_Dystopie.pdf Utopie_und_Dystopie.pdf
 
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v3
